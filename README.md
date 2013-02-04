@@ -1,4 +1,4 @@
 tl-unified-build
 ================
 
-Attempt to create a unified Gradle environment
+Attempt to create a unified Gradle environment.
