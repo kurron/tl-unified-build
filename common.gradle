@@ -10,4 +10,9 @@ allprojects {
             classpath group: 'org.kurron', name: 'unified-build', version: '0.1-SNAPSHOT'
         }
     }
+
+    task wrapper(type: Wrapper) {
+        gradleVersion = '1.4'
+        description = 'Generate the Gradle wrapper scripts'
+    }
 }
