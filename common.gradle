@@ -1,0 +1,13 @@
+// common logic applied via init.gradle scripts
+println 'common.gradle'
+
+allprojects {
+    buildscript {
+        repositories {
+            mavenLocal()
+        }
+        dependencies {
+            classpath group: 'org.kurron', name: 'unified-build', version: '0.1-SNAPSHOT'
+        }
+    }
+}
