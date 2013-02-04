@@ -1,5 +1,7 @@
 package org.kurron.gradle
 
+import org.gradle.api.tasks.TaskAction
+
 /**
  * An example of creating a configurable task.
  */

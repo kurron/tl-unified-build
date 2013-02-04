@@ -1,0 +1,19 @@
+<component name="libraryTable">
+  <library name="gradle-base-services-1.4">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Software/gradle/lib/gradle-base-services-1.4.jar!/" />
+      <root url="jar://$USER_HOME$/Software/gradle/lib/gradle-base-services-groovy-1.4.jar!/" />
+      <root url="jar://$USER_HOME$/Software/gradle/lib/gradle-cli-1.4.jar!/" />
+      <root url="jar://$USER_HOME$/Software/gradle/lib/gradle-core-1.4.jar!/" />
+      <root url="jar://$USER_HOME$/Software/gradle/lib/gradle-launcher-1.4.jar!/" />
+      <root url="jar://$USER_HOME$/Software/gradle/lib/gradle-messaging-1.4.jar!/" />
+      <root url="jar://$USER_HOME$/Software/gradle/lib/gradle-native-1.4.jar!/" />
+      <root url="jar://$USER_HOME$/Software/gradle/lib/gradle-open-api-1.4.jar!/" />
+      <root url="jar://$USER_HOME$/Software/gradle/lib/gradle-tooling-api-1.4.jar!/" />
+      <root url="jar://$USER_HOME$/Software/gradle/lib/gradle-ui-1.4.jar!/" />
+      <root url="jar://$USER_HOME$/Software/gradle/lib/gradle-wrapper-1.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,13 +1,9 @@
 <component name="libraryTable">
   <library name="groovy">
     <CLASSES>
-      <root url="jar://$GRADLE_CACHE$/bin/groovy-all-2.1.0-indy.jar!/" />
+      <root url="jar://$USER_HOME$/Software/gradle/lib/groovy-all-1.8.6.jar!/" />
     </CLASSES>
-    <JAVADOC>
-      <root url="jar://$GRADLE_CACHE$/src/groovy-all-2.1.0-javadoc.jar!/" />
-    </JAVADOC>
-    <SOURCES>
-      <root url="jar://$GRADLE_CACHE$/src/groovy-all-2.1.0-sources.jar!/" />
-    </SOURCES>
+    <JAVADOC />
+    <SOURCES />
   </library>
 </component>
