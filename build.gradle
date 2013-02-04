@@ -2,8 +2,9 @@ apply plugin: 'project-report'
 apply plugin: 'groovy'
 apply plugin: 'maven'
 
-group = "kurron"
-version = 'default'
+group = 'org.kurron'
+version = '0.1-SNAPSHOT'
+archivesBaseName = 'unified-build'
 
 repositories {
     mavenLocal()
