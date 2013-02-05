@@ -22,6 +22,7 @@ allprojects {
         }
     }
 
+    ext.httpTimeOut = 2  // how many seconds to wait for the configuration files
     ext.junitVersion  = '4.10'
     ext.hamcrestVersion  = '1.3'
     ext.groovyVersion  = '2.1.0'
@@ -34,10 +35,9 @@ allprojects {
 
 
     afterProject { project ->
-        println 'after ' + project.name
         if ( project.plugins.hasPlugin( JavaPlugin ) )
         {
-            println 'Java plugin detected!'
+            logger.quiet 'Java plugin detected!'
             logger.quiet 'Configuring compiler options'
             project.tasks.getByName( 'compileJava' ).options*.compilerArgs = ['-Xlint:deprecation','-encoding', 'UTF-8']
             project.tasks.getByName( 'compileTestJava' ).options*.compilerArgs = ['-Xlint:deprecation','-encoding', 'UTF-8']
@@ -54,12 +54,9 @@ allprojects {
             project.dependencies  {
                 testCompile module( "junit:junit-dep:${junitVersion}" )
                 testCompile module( "org.hamcrest:hamcrest-all:${hamcrestVersion}" )
-                testCompile module( "org.codehaus.groovy:groovy-all:${groovyVersion}:indy" )
-                testCompile module( "org.spockframework:spock-core:${spockVersion}" )
 
                 sourceArchives module( "junit:junit-dep:${junitVersion}:sources" )
                 sourceArchives module( "org.hamcrest:hamcrest-all:${hamcrestVersion}:sources" )
-                sourceArchives module( "org.spockframework:spock-core:${spockVersion}:sources" )
             }
 
             task collectJars(type: Copy) {
@@ -86,9 +83,9 @@ allprojects {
                     dest: "$buildDir/checkstyle.xml",
                     verbose: true,
                     usetimestamp: true,
-                    maxtime: 2 )
-            checkstyle.configFile = file("$buildDir/checkstyle.xml")
-            checkstyle.configProperties = [suppressionDirectory: projectDir.path ]
+                    maxtime: httpTimeOut )
+            project.checkstyle.configFile = file("$buildDir/checkstyle.xml")
+            project.checkstyle.configProperties = [suppressionDirectory: projectDir.path ]
 
             ext.sharedManifest = manifest {
                 attributes( "Implementation-Title": project.name, "Implementation-Version": project.version )
@@ -133,6 +130,11 @@ allprojects {
                 archives testBinariesJar
                 archives javadocJar
             }
+
+            logger.quiet 'Applying maven plug-in'
+            project.plugins.apply( 'maven' )
+            project.defaultTasks.add( 'install' )
+
         }
 
         if ( !project.plugins.hasPlugin( ProjectReportsPlugin ) )
@@ -144,6 +146,41 @@ allprojects {
             project.taskReport.enabled = true
             // most useful if the reports are generated prior to other tasks running
             project.defaultTasks = ['projectReport'] + project.defaultTasks
+        }
+
+        if ( project.plugins.hasPlugin( GroovyPlugin ) )
+        {
+            logger.quiet 'Groovy plugin detected!'
+            project.dependencies  {
+                compile module( "org.codehaus.groovy:groovy-all:${groovyVersion}:indy" )
+                testCompile module( "org.spockframework:spock-core:${spockVersion}" )
+                testCompile module( "org.codehaus.groovy:groovy-all:${groovyVersion}:indy" )
+
+                sourceArchives module( "org.spockframework:spock-core:${spockVersion}:sources" )
+            }
+
+            logger.quiet 'Applying codenarc plug-in'
+            project.plugins.apply( 'codenarc' )
+            new File( "$buildDir" ).mkdirs()
+            ant.get( src: 'https://raw.github.com/kurron/tl-unified-build/master/config/codenarc/codenarc.xml',
+                     dest: "$buildDir/codenarc.xml",
+                     verbose: true,
+                     usetimestamp: true,
+                     maxtime: httpTimeOut )
+            project.codenarc.configFile = file( "${buildDir}/codenarc.xml" )
+            project.codenarc.ignoreFailures = false
+
+            task groovydocJar(type: Jar, dependsOn: groovydoc) {
+                classifier = 'groovy-api'
+                from project.docsDir.path + '/groovydoc'
+                manifest = project.manifest {
+                    from sharedManifest
+                }
+            }
+
+            artifacts {
+                archives groovydocJar
+            }
         }
     }
 }
