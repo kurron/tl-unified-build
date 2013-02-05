@@ -16,10 +16,16 @@ allprojects {
         mavenLocal()
     }
 
+    ext.junitVersion  = '4.10'
+    ext.hamcrestVersion  = '1.3'
+    ext.groovyVersion  = '2.1.0'
+    ext.spockVersion  = '0.7-groovy-2.0'
+
     task wrapper(type: Wrapper) {
         gradleVersion = '1.4'
         description = 'Generate the Gradle wrapper scripts'
     }
+
 
     afterProject { project ->
         println 'after ' + project.name
@@ -29,6 +35,29 @@ allprojects {
             logger.quiet 'Configuring compiler options'
             project.tasks.getByName( 'compileJava' ).options*.compilerArgs = ['-Xlint:deprecation','-encoding', 'UTF-8']
             project.tasks.getByName( 'compileTestJava' ).options*.compilerArgs = ['-Xlint:deprecation','-encoding', 'UTF-8']
+
+            logger.quiet 'Configuring unit testing options'
+            project.tasks.getByName( 'test' ).scanForTestClasses = false
+            project.tasks.getByName( 'test' ).includes = ['**/*UnitTest.class']
+            project.tasks.getByName( 'test' ).excludes = ['**/AbstractCardUnitTest.class','**/AbstractUnitTest.class']
+            // needed for Java 7 and Cobertura combination
+            project.tasks.getByName( 'test' ).jvmArgs "-XX:-UseSplitVerifier"
+            project.tasks.getByName( 'test' ).maxParallelForks = Runtime.runtime.availableProcessors()
+
+            // we use the "module" form so that transitive dependencies aren't pulled down and we fully control the versions
+            project.dependencies  {
+                testCompile module( "junit:junit-dep:${junitVersion}" )
+                testCompile module( "org.hamcrest:hamcrest-all:${hamcrestVersion}" )
+                testCompile module( "org.codehaus.groovy:groovy-all:${groovyVersion}:indy" )
+                testCompile module( "org.spockframework:spock-core:${spockVersion}" )
+            }
+
+            task collectJars(type: Copy) {
+                into "$buildDir/dependencies"
+                from( [configurations.testRuntime] )
+                doFirst { logger.quiet "Copying dependencies to $buildDir/dependencies" }
+            }
+            project.defaultTasks = ['collectJars'] + project.defaultTasks
 
             logger.quiet 'Applying jdepend plug-in'
             project.plugins.apply( 'jdepend' )
@@ -42,9 +71,12 @@ allprojects {
             project.properties['checkstyle'].ignoreFailures = false
             project.checkstyleMain.enabled = true
             project.checkstyleTest.enabled = false
+            new File( "$buildDir" ).mkdirs()
             ant.get( src: 'https://raw.github.com/kurron/tl-unified-build/master/config/checkstyle/checkstyle.xml',
                     dest: "$buildDir/checkstyle.xml",
-                    verbose:true )
+                    verbose: true,
+                    usetimestamp: true,
+                    maxtime: 2 )
             checkstyle.configFile = file("$buildDir/checkstyle.xml")
             checkstyle.configProperties = [suppressionDirectory: projectDir.path ]
         }
