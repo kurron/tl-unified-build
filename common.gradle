@@ -11,8 +11,31 @@ allprojects {
         }
     }
 
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+
     task wrapper(type: Wrapper) {
         gradleVersion = '1.4'
         description = 'Generate the Gradle wrapper scripts'
+    }
+
+    afterProject { project ->
+        println 'after ' + project.name
+        if ( project.plugins.hasPlugin( JavaPlugin ) )
+        {
+            println 'Java plugin detected!'
+            logger.quiet 'Configuring compiler options'
+            project.tasks.getByName( 'compileJava' ).options*.compilerArgs = ['-Xlint:deprecation','-encoding', 'UTF-8']
+            project.tasks.getByName( 'compileTestJava' ).options*.compilerArgs = ['-Xlint:deprecation','-encoding', 'UTF-8']
+
+            logger.quiet 'Applying jdepend plug-in'
+            project.plugins.apply( 'jdepend' )
+            project.jdependMain.enabled = true
+            project.jdependTest.enabled = true
+            project.properties['jdepend'].ignoreFailures = false
+            project.properties['jdepend'].sourceSets = [sourceSets.main,sourceSets.test]
+        }
     }
 }

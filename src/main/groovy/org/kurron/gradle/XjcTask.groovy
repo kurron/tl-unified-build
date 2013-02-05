@@ -9,6 +9,7 @@ import org.gradle.api.tasks.Exec
 class XjcTask extends DefaultTask {
     String description = 'Generate JAXB annotated classes from an XML schema file'
     String group = 'Build'
+    //TODO: figure out how to use incremental build support
     String sourceDirectory = null
     String destinationDirectory = null
     String packageName = 'org.kurron.generated'
