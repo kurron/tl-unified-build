@@ -5,9 +5,11 @@ allprojects {
     buildscript {
         repositories {
             mavenLocal()
+            mavenCentral()
         }
         dependencies {
             classpath group: 'org.kurron', name: 'unified-build', version: '0.1-SNAPSHOT'
+            classpath 'com.mapvine:gradle-cobertura-plugin:1.0'
         }
     }
 
@@ -32,7 +34,6 @@ allprojects {
         gradleVersion = '1.4'
         description = 'Generate the Gradle wrapper scripts'
     }
-
 
     afterProject { project ->
         if ( project.plugins.hasPlugin( JavaPlugin ) )
@@ -135,6 +136,32 @@ allprojects {
             project.plugins.apply( 'maven' )
             project.defaultTasks.add( 'install' )
 
+            logger.quiet 'Applying cobertura plug-in'
+            project.plugins.apply( 'cobertura' )
+            project.cobertura.format = 'html'
+            project.cobertura.includes = ['**/*.java', '**/*.groovy']
+            ant.taskdef( resource: 'tasks.properties',
+                    classpath: project.configurations.cobertura.asPath )
+            task verifyCodeCoverage( dependsOn: 'test',
+                    description: 'Create code coverage reports',
+                    group: 'Reporting') {
+                doFirst {
+                    ant.'cobertura-check'( datafile: "$buildDir/cobertura/main/cobertura.ser",
+                            branchrate: 50,
+                            haltonfailure: false,
+                            failureproperty: 'coverageFailure',
+                            linerate: 50,
+                            packagebranchrate: 50,
+                            packagelinerate: 50,
+                            totalbranchrate: 50,
+                            totallinerate: 50 )
+                    if( 'true' == ant.properties.coverageFailure )
+                    {
+                        throw new RuntimeException("Not enough code coverage. Check $reportsDir/cobertura for details.")
+                    }
+                }
+            }
+            project.tasks.getByName( 'check' ).dependsOn( verifyCodeCoverage )
         }
 
         if ( !project.plugins.hasPlugin( ProjectReportsPlugin ) )
@@ -163,10 +190,10 @@ allprojects {
             project.plugins.apply( 'codenarc' )
             new File( "$buildDir" ).mkdirs()
             ant.get( src: 'https://raw.github.com/kurron/tl-unified-build/master/config/codenarc/codenarc.xml',
-                     dest: "$buildDir/codenarc.xml",
-                     verbose: true,
-                     usetimestamp: true,
-                     maxtime: httpTimeOut )
+                    dest: "$buildDir/codenarc.xml",
+                    verbose: true,
+                    usetimestamp: true,
+                    maxtime: httpTimeOut )
             project.codenarc.configFile = file( "${buildDir}/codenarc.xml" )
             project.codenarc.ignoreFailures = false
 
