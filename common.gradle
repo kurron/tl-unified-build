@@ -5,11 +5,10 @@ allprojects {
     buildscript {
         repositories {
             mavenLocal()
-            mavenCentral()
         }
         dependencies {
             classpath group: 'org.kurron', name: 'unified-build', version: '0.1-SNAPSHOT'
-            classpath 'com.mapvine:gradle-cobertura-plugin:1.0'
+            classpath 'org.kurron:gradle-cobertura-plugin:1.0'
         }
     }
 
@@ -24,7 +23,7 @@ allprojects {
         }
     }
 
-    ext.httpTimeOut = 2  // how many seconds to wait for the configuration files
+    ext.httpTimeOut = 4  // how many seconds to wait for the configuration files
     ext.junitVersion  = '4.10'
     ext.hamcrestVersion  = '1.3'
     ext.groovyVersion  = '2.1.0'
@@ -140,6 +139,11 @@ allprojects {
             project.plugins.apply( 'cobertura' )
             project.cobertura.format = 'html'
             project.cobertura.includes = ['**/*.java', '**/*.groovy']
+            if ( project.ext.coverageExcludes ) {
+                logger.quiet "Cobertura exclusions found."
+                project.ext.coverageExcludes.each { logger.quiet "Excluding $it" }
+                project.cobertura.ignores = project.ext.coverageExcludes
+            }
             ant.taskdef( resource: 'tasks.properties',
                     classpath: project.configurations.cobertura.asPath )
             task verifyCodeCoverage( dependsOn: 'test',
