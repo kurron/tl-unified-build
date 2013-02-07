@@ -219,7 +219,7 @@ allprojects {
                                 totallinerate: 50 )
                         if( 'true' == ant.properties.coverageFailure )
                         {
-                            throw new RuntimeException("Not enough code coverage. Check $reportsDir/cobertura for details.")
+                            throw new RuntimeException("Not enough code coverage. Check $reporting.baseDir/cobertura for details.")
                         }
                     }
                 }
