@@ -43,6 +43,7 @@ allprojects {
                 description 'Where to get internally published artifacts'
                 url = publicationUrl
             }
+            mavenCentral() // last ditch location
         }
         dependencies {
             classpath group: 'org.kurron', name: 'tl-unified-build', version: '1.0.0'
