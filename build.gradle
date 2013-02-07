@@ -3,8 +3,12 @@ apply plugin: 'groovy'
 apply plugin: 'maven'
 
 group = 'org.kurron'
-version = '0.1-SNAPSHOT'
-archivesBaseName = 'unified-build'
+version = '1.0.0'
+
+ext.isSnapshot = version.endsWith('-SNAPSHOT')
+ext.publicationUrl = "http://192.168.254.81:81/artifactory/mods-release-local"
+ext.publicationUsername = 'SVNBuild'
+ext.publicationPassword = 'Snoopy*09'
 
 repositories {
     mavenLocal()
@@ -15,9 +19,50 @@ dependencies {
     compile localGroovy()
 }
 
+defaultTasks 'projectReport', 'build'
+
+println "version = $version"
+if ( isSnapshot )
+{
+    logger.quiet 'Snapshot revision detected. Configuring for local installation.'
+    project.defaultTasks.add( 'install' )
+}
+else
+{
+    logger.quiet 'Release revision detected. Configuring for publication.'
+    uploadArchives {
+        repositories {
+            maven {
+                description 'Sandbox area of the repository to test publishing to'
+                url = publicationUrl
+                credentials {
+                    username = publicationUsername
+                    password = publicationPassword
+                }
+            }
+        }
+    }
+    defaultTasks.add( 'uploadArchives' )
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '1.4'
     description = 'Generate the Gradle wrapper scripts'
 }
 
-defaultTasks 'projectReport', 'build', 'install'
+task sourceJar(type: Jar) {
+    description = 'An archive of the source code for Maven Central'
+    classifier = 'sources'
+    from sourceSets.main.groovy
+}
+
+task groovydocJar(type: Jar) {
+    description = 'An archive of the GroovyDocs for Maven Central'
+    classifier = 'javadoc'
+    from groovydoc
+}
+
+artifacts {
+    archives groovydocJar, sourceJar
+}
+
