@@ -192,10 +192,15 @@ allprojects {
                 project.plugins.apply( 'cobertura' )
                 project.cobertura.format = 'html'
                 project.cobertura.includes = ['**/*.java', '**/*.groovy']
-                if ( project.ext.coverageExcludes ) {
+                if ( project.properties.containsKey( 'coverageExcludes' ) )
+                {
                     logger.quiet "Cobertura exclusions found."
                     project.ext.coverageExcludes.each { logger.quiet "Excluding $it" }
                     project.cobertura.ignores = project.ext.coverageExcludes
+                }
+                else
+                {
+                    logger.quiet "Cobertura exclusions not found."
                 }
                 ant.taskdef( resource: 'tasks.properties',
                         classpath: project.configurations.cobertura.asPath )
