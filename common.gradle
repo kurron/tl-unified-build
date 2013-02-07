@@ -30,11 +30,15 @@ allprojects {
 
     buildscript {
         repositories {
-            mavenLocal()
             maven {
                 name 'Experimental'
                 description 'Where to get internally published artifacts'
                 url = publicationUrl
+            }
+            maven {
+                name 'MavenCache'
+                description 'Local Artifactory cache of Maven Central'
+                url = mavenCentralCacheUrl
             }
         }
         dependencies {
@@ -49,7 +53,6 @@ allprojects {
             description 'Local Artifactory cache of Maven Central'
             url = mavenCentralCacheUrl
         }
-        mavenLocal()
     }
 
     configurations {
