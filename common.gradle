@@ -30,6 +30,7 @@ allprojects {
     project.version = project.project_version
     logger.quiet "version = $project.version"
 
+    group = 'com.transparent'
 
     buildscript {
         repositories {
