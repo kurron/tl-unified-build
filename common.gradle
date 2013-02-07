@@ -12,6 +12,21 @@ allprojects {
     ext.publicationUsername = 'SVNBuild'
     ext.publicationPassword = 'Snoopy*09'
 
+    if ( project.properties.containsKey( 'project_version' ) )
+    {
+        logger.quiet "Using specifed project_version of $project_version"
+        status = 'release'
+    }
+    else
+    {
+        ext.project_version = '1.0.0-SNAPSHOT'
+        logger.quiet "project_version not specified.  Using default version of $project_version"
+        status = 'integration'
+    }
+    project.version = project.project_version
+    logger.quiet "version = $project.version"
+
+
     buildscript {
         repositories {
             mavenLocal()
@@ -41,13 +56,13 @@ allprojects {
 
     if ( stageOne )
     {
-        logger.quiet( "Generating stage one tasks for $name project" )
         task wrapper(type: Wrapper) {
             gradleVersion = '1.4'
             description = 'Generate the Gradle wrapper scripts'
         }
 
         afterProject { project ->
+            logger.quiet( "Generating stage one tasks for $name project" )
             ext.isSnapshot = version.endsWith("-SNAPSHOT")
 
             if ( project.plugins.hasPlugin( JavaPlugin ) )
