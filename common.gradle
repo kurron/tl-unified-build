@@ -34,16 +34,10 @@ allprojects {
     buildscript {
         repositories {
             maven {
-                name 'MavenCache'
-                description 'Local Artifactory cache of Maven Central'
-                url = mavenCentralCacheUrl
-            }
-            maven {
                 name 'Experimental'
                 description 'Where to get internally published artifacts'
                 url = publicationUrl
             }
-            mavenCentral() // last ditch location
         }
         dependencies {
             classpath group: 'org.kurron', name: 'tl-unified-build', version: '1.0.0'
@@ -72,6 +66,7 @@ allprojects {
             description 'Local Artifactory cache of SpringSource'
             url = springsourceCacheUrl
         }
+        mavenCentral() // our Artifactory cache has a problem fetching CodeNarc
     }
 
     configurations {
