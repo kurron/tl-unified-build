@@ -12,6 +12,7 @@ allprojects {
     ext.publicationUsername = 'SVNBuild'
     ext.publicationPassword = 'Snoopy*09'
     ext.mavenCentralCacheUrl = "http://192.168.254.81:81/artifactory/repo1-cache"
+    ext.codehausCacheUrl = "http://192.168.254.81:81/artifactory/codehaus-cache"
 
     if ( project.properties.containsKey( 'project_version' ) )
     {
@@ -47,6 +48,11 @@ allprojects {
             name 'MavenCache'
             description 'Local Artifactory cache of Maven Central'
             url = mavenCentralCacheUrl
+        }
+        maven {
+            name 'CodehausCache'
+            description 'Local Artifactory cache of Codehaus'
+            url = codehausCacheUrl
         }
     }
 
