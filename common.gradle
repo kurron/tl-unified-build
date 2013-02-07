@@ -14,6 +14,7 @@ allprojects {
     ext.mavenCentralCacheUrl = "http://192.168.254.81:81/artifactory/repo1-cache"
     ext.codehausCacheUrl = "http://192.168.254.81:81/artifactory/codehaus-cache"
     ext.jbossCacheUrl = "http://192.168.254.81:81/artifactory/jboss-cache"
+    ext.springsourceCacheUrl = "http://192.168.254.81:81/artifactory/springsource-repo-cache"
 
     if ( project.properties.containsKey( 'project_version' ) )
     {
@@ -60,6 +61,12 @@ allprojects {
             description 'Local Artifactory cache of JBOSS'
             url = jbossCacheUrl
         }
+        maven {
+            name 'SpringSourceCache'
+            description 'Local Artifactory cache of SpringSource'
+            url = springsourceCacheUrl
+        }
+        mavenCentral() // last ditch location if the others don't have the artifacts
     }
 
     configurations {
