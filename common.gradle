@@ -13,6 +13,7 @@ allprojects {
     ext.publicationPassword = 'Snoopy*09'
     ext.mavenCentralCacheUrl = "http://192.168.254.81:81/artifactory/repo1-cache"
     ext.codehausCacheUrl = "http://192.168.254.81:81/artifactory/codehaus-cache"
+    ext.jbossCacheUrl = "http://192.168.254.81:81/artifactory/jboss-cache"
 
     if ( project.properties.containsKey( 'project_version' ) )
     {
@@ -53,6 +54,11 @@ allprojects {
             name 'CodehausCache'
             description 'Local Artifactory cache of Codehaus'
             url = codehausCacheUrl
+        }
+        maven {
+            name 'JbossCache'
+            description 'Local Artifactory cache of JBOSS'
+            url = jbossCacheUrl
         }
     }
 
