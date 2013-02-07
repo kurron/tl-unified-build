@@ -11,6 +11,7 @@ allprojects {
     ext.publicationUrl = "http://192.168.254.81:81/artifactory/mods-release-local"
     ext.publicationUsername = 'SVNBuild'
     ext.publicationPassword = 'Snoopy*09'
+    ext.mavenCentralCacheUrl = "http://192.168.254.81:81/artifactory/repor1-cache"
 
     if ( project.properties.containsKey( 'project_version' ) )
     {
@@ -31,7 +32,7 @@ allprojects {
         repositories {
             mavenLocal()
             maven {
-                name 'Internal'
+                name 'Experimental'
                 description 'Where to get internally published artifacts'
                 url = publicationUrl
             }
@@ -43,7 +44,11 @@ allprojects {
     }
 
     repositories {
-        mavenCentral()
+        maven {
+            name 'MavenCache'
+            description 'Local Artifactory cache of Maven Central'
+            url = mavenCentralCacheUrl
+        }
         mavenLocal()
     }
 
