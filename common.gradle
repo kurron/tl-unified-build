@@ -34,6 +34,11 @@ allprojects {
     buildscript {
         repositories {
             maven {
+                name 'MavenCache'
+                description 'Local Artifactory cache of Maven Central'
+                url = mavenCentralCacheUrl
+            }
+            maven {
                 name 'Experimental'
                 description 'Where to get internally published artifacts'
                 url = publicationUrl
@@ -66,7 +71,6 @@ allprojects {
             description 'Local Artifactory cache of SpringSource'
             url = springsourceCacheUrl
         }
-        mavenCentral() // last ditch location if the others don't have the artifacts
     }
 
     configurations {
