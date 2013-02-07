@@ -29,6 +29,9 @@ allprojects {
     ext.groovyVersion  = '2.1.0'
     ext.spockVersion  = '0.7-groovy-2.0'
     ext.stageOne = (false == properties.containsKey( 'stage' ) )|| (properties.get( 'stage').equalsIgnoreCase( 'ONE' ) )
+    ext.publicationUrl = "http://192.168.254.81:81/artifactory/mods-release-local"
+    ext.publicationUsername = 'SVNBuild'
+    ext.publicationPassword = 'Snoopy*09'
 
     if ( stageOne )
     {
@@ -39,9 +42,13 @@ allprojects {
         }
 
         afterProject { project ->
+            ext.isSnapshot = version.endsWith("-SNAPSHOT")
+
             if ( project.plugins.hasPlugin( JavaPlugin ) )
             {
                 logger.quiet 'Java plugin detected!'
+                project.defaultTasks.add( 'build' )
+
                 logger.quiet 'Configuring compiler options'
                 project.tasks.getByName( 'compileJava' ).options*.compilerArgs = ['-Xlint:deprecation','-encoding', 'UTF-8']
                 project.tasks.getByName( 'compileTestJava' ).options*.compilerArgs = ['-Xlint:deprecation','-encoding', 'UTF-8']
@@ -64,6 +71,7 @@ allprojects {
                 }
 
                 task collectJars(type: Copy) {
+                    description 'Copy dependencies into build area for use by IDEs'
                     into "$buildDir/dependencies"
                     from( [configurations.testRuntime,configurations.sourceArchives] )
                     doFirst { logger.quiet "Copying dependencies to $buildDir/dependencies" }
@@ -135,9 +143,6 @@ allprojects {
                     archives javadocJar
                 }
 
-                logger.quiet 'Applying maven plug-in'
-                project.plugins.apply( 'maven' )
-                project.defaultTasks.add( 'install' )
 
                 logger.quiet 'Applying cobertura plug-in'
                 project.plugins.apply( 'cobertura' )
@@ -170,6 +175,53 @@ allprojects {
                     }
                 }
                 project.tasks.getByName( 'check' ).dependsOn( verifyCodeCoverage )
+
+                if ( project.isSnapshot )
+                {
+                    logger.quiet 'Snapshot revision detected. Applying maven plug-in.'
+                    project.plugins.apply( 'maven' )
+                    project.defaultTasks.add( 'install' )
+                }
+                else
+                {
+                    // this is the publishing plugin that is currently in incubaton.  Works great
+                    // but is limited to one artifact only.  We will switch over to this when it is
+                    // done baking.
+/*
+                    logger.quiet 'Release revision detected. Applying maven-publish plug-in.'
+                    project.plugins.apply( 'maven-publish' )
+                    project.defaultTasks.add( 'publishMavenPublicationToMavenLocal' )
+                    project.defaultTasks.add( 'publishMavenPublicationToMavenRepository' )
+
+                    project.publishing {
+                        repositories {
+                            maven {
+                                description 'Sandbox area of the repository to test publishing to'
+                                url = publicationUrl
+                                credentials {
+                                    username = publicationUsername
+                                    password = publicationPassword
+                                }
+                            }
+                        }
+                    }
+*/
+                    logger.quiet 'Release revision detected. Configuring for Artifactory publication.'
+                    project.plugins.apply( 'maven' )
+                    project.uploadArchives {
+                        repositories {
+                            maven {
+                                description 'Sandbox area of the repository to test publishing to'
+                                url = publicationUrl
+                                credentials {
+                                    username = publicationUsername
+                                    password = publicationPassword
+                                }
+                            }
+                        }
+                    }
+                    project.defaultTasks.add( 'uploadArchives' )
+                }
             }
 
             if ( !project.plugins.hasPlugin( ProjectReportsPlugin ) )
