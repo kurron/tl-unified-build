@@ -79,11 +79,6 @@ allprojects {
 
     if ( stageOne )
     {
-        task wrapper(type: Wrapper) {
-            gradleVersion = '1.4'
-            description = 'Generate the Gradle wrapper scripts'
-        }
-
         afterProject { project ->
             logger.quiet( "Generating stage one tasks for $name project" )
             ext.isSnapshot = version.endsWith("-SNAPSHOT")

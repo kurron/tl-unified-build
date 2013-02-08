@@ -1,0 +1,9 @@
+ext.wrapperVersion = '1.4.0'
+ext.artifactory ='192.168.254.81:81'
+
+task wrapper(type: Wrapper) {
+    description = 'Generate the Transparent-specific Gradle wrapper scripts'
+    distributionUrl = "http://${artifactory}/artifactory/mods-release-local/org/kurron/company-gradle/${wrapperVersion}/company-gradle-${wrapperVersion}-bin.zip"
+}
+
+defaultTasks 'wrapper'
