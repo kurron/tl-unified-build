@@ -168,7 +168,7 @@ allprojects {
                 }
 
                 task javadocJar(type: Jar, dependsOn: javadoc) {
-                    classifier = 'api'
+                    classifier = 'javadoc'
                     from project.docsDir.path + '/javadoc'
                     manifest = project.manifest {
                         from sharedManifest
@@ -302,7 +302,7 @@ allprojects {
                 project.codenarc.ignoreFailures = false
 
                 task groovydocJar(type: Jar, dependsOn: groovydoc) {
-                    classifier = 'groovy-api'
+                    classifier = 'groovydoc'
                     from project.docsDir.path + '/groovydoc'
                     manifest = project.manifest {
                         from sharedManifest
