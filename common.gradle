@@ -201,8 +201,8 @@ allprojects {
                 ant.taskdef( resource: 'tasks.properties',
                         classpath: project.configurations.cobertura.asPath )
                 task verifyCodeCoverage( dependsOn: 'test',
-                        description: 'Create code coverage reports',
-                        group: 'Reporting') {
+                                         description: 'Create code coverage reports',
+                                         group: 'Reporting') {
                     doFirst {
                         ant.'cobertura-check'( datafile: "$buildDir/cobertura/main/cobertura.ser",
                                 branchrate: 50,
@@ -213,9 +213,11 @@ allprojects {
                                 packagelinerate: 50,
                                 totalbranchrate: 50,
                                 totallinerate: 50 )
+
+                        println "coverageFailure = $coverageFailure"
                         if( 'true' == ant.properties.coverageFailure )
                         {
-                            throw new RuntimeException("Not enough code coverage. Check $reporting.baseDir/cobertura for details.")
+                            throw new RuntimeException("Not enough code coverage. Check $reporting.baseDir/cobertura/main for details.")
                         }
                     }
                 }
@@ -229,7 +231,7 @@ allprojects {
                 }
                 else
                 {
-                    // this is the publishing plugin that is currently in incubaton.  Works great
+                    // this is the publishing plugin that is currently in incubation.  Works great
                     // but is limited to one artifact only.  We will switch over to this when it is
                     // done baking.
 /*
@@ -302,6 +304,8 @@ allprojects {
                         maxtime: httpTimeOut )
                 project.codenarc.configFile = file( "${buildDir}/codenarc.xml" )
                 project.codenarc.ignoreFailures = false
+                project.codenarcMain.enabled = true
+                project.codenarcTest.enabled = false
 
                 task groovydocJar(type: Jar, dependsOn: groovydoc) {
                     classifier = 'groovydoc'
