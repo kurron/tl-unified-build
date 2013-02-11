@@ -67,7 +67,9 @@ allprojects {
             description 'Local Artifactory cache of SpringSource'
             url = springsourceCacheUrl
         }
-        mavenCentral() // our Artifactory cache has a problem fetching CodeNarc
+        // our Artifactory cache has a problem fetching CodeNarc
+        // update: Scott says this has been fixed
+        //mavenCentral()
     }
 
     configurations {
