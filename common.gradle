@@ -218,7 +218,7 @@ allprojects {
                         {
                             logger.quiet 'Property ant.properties.coverageFailure found. Checking for sufficient code coverage.'
                             logger.quiet "ant.properties.coverageFailure = $ant.properties.coverageFailure"
-                            if( 'true' == ant.properties.coverageFailure )
+                            if( true == ant.properties.coverageFailure )
                             {
                                 throw new RuntimeException("Not enough code coverage. Check $reporting.baseDir/cobertura/main for details.")
                             }
