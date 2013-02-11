@@ -282,6 +282,7 @@ allprojects {
                         project {
                             description = project.description
                             sourceEncoding = 'UTF-8'
+                            dynamicAnalysis = 'false'
                         }
                     }
                 }
