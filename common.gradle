@@ -127,7 +127,6 @@ allprojects {
                     doFirst { logger.quiet "Copying dependencies to $buildDir/dependencies" }
                 }
                 project.defaultTasks = ['collectJars'] + project.defaultTasks
-                project.defaultTasks = ['clean'] + project.defaultTasks
 
                 logger.quiet 'Applying jdepend plug-in'
                 project.plugins.apply( 'jdepend' )
@@ -141,14 +140,12 @@ allprojects {
                 project.properties['checkstyle'].ignoreFailures = false
                 project.checkstyleMain.enabled = true
                 project.checkstyleTest.enabled = false
-                project.checkstyleMain.doFirst {
-                    new File( "$buildDir" ).mkdirs()
-                    ant.get( src: 'https://raw.github.com/kurron/tl-unified-build/master/config/checkstyle/checkstyle.xml',
-                            dest: "$buildDir/checkstyle.xml",
-                            verbose: true,
-                            usetimestamp: true,
-                            maxtime: httpTimeOut )
-                }
+                new File( "$buildDir" ).mkdirs()
+                ant.get( src: 'https://raw.github.com/kurron/tl-unified-build/master/config/checkstyle/checkstyle.xml',
+                        dest: "$buildDir/checkstyle.xml",
+                        verbose: true,
+                        usetimestamp: true,
+                        maxtime: httpTimeOut )
                 project.checkstyle.configFile = file("$buildDir/checkstyle.xml")
                 project.checkstyle.configProperties = [suppressionDirectory: projectDir.path ]
 
