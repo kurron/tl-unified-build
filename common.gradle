@@ -269,8 +269,8 @@ allprojects {
                     logger.quiet 'Release revision detected. Configuring for Sonar publication.'
                     project.plugins.apply( 'sonar' )
                     project.defaultTasks.add( 'sonarAnalyze' )
-                    project.sonar.server.url = "http:///home/ron/git/tl-unified-build/common.gradle:9000/"
-                    project.sonar.database.url = "jdbc:mysql:///home/ron/git/tl-unified-build/common.gradle/sonar"
+                    project.sonar.server.url = "http://192.168.254.81:9000/"
+                    project.sonar.database.url = "jdbc:mysql://192.168.254.81/sonar"
                     project.sonar.database.driverClassName = "com.mysql.jdbc.Driver"
                     project.sonar.database.username = "sonar"
                     project.sonar.database.password = "sonar"
