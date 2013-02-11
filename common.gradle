@@ -214,7 +214,7 @@ allprojects {
                                 totalbranchrate: 50,
                                 totallinerate: 50 )
 
-                        println "coverageFailure = $coverageFailure"
+                        println "coverageFailure = ant.properties.coverageFailure"
                         if( 'true' == ant.properties.coverageFailure )
                         {
                             throw new RuntimeException("Not enough code coverage. Check $reporting.baseDir/cobertura/main for details.")
