@@ -91,7 +91,7 @@ allprojects {
                 project.propertyReport.enabled = true
                 project.taskReport.enabled = true
                 // most useful if the reports are generated prior to other tasks running
-                project.defaultTasks = ['projectReport'] + project.defaultTasks
+                project.defaultTasks = ['projectReport']
             }
 
             if ( project.plugins.hasPlugin( JavaPlugin ) )
