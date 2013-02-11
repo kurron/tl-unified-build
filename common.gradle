@@ -269,22 +269,14 @@ allprojects {
                     logger.quiet 'Release revision detected. Configuring for Sonar publication.'
                     project.plugins.apply( 'sonar' )
                     project.defaultTasks.add( 'sonarAnalyze' )
-                    project.sonar {
-                        server {
-                            url = "http:///home/ron/git/tl-unified-build/common.gradle:9000/"
-                        }
-                        database {
-                            url = "jdbc:mysql:///home/ron/git/tl-unified-build/common.gradle/sonar"
-                            driverClassName = "com.mysql.jdbc.Driver"
-                            username = "sonar"
-                            password = "sonar"
-                        }
-                        project {
-                            description = project.description
-                            sourceEncoding = 'UTF-8'
-                            dynamicAnalysis = 'false'
-                        }
-                    }
+                    project.sonar.server.url = "http:///home/ron/git/tl-unified-build/common.gradle:9000/"
+                    project.sonar.database.url = "jdbc:mysql:///home/ron/git/tl-unified-build/common.gradle/sonar"
+                    project.sonar.database.driverClassName = "com.mysql.jdbc.Driver"
+                    project.sonar.database.username = "sonar"
+                    project.sonar.database.password = "sonar"
+                    project.sonar.project.description = project.description
+                    project.sonar.project.sourceEncoding = 'UTF-8'
+                    project.sonar.project.dynamicAnalysis = 'false'
                 }
             }
 
