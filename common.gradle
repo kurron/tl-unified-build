@@ -116,6 +116,7 @@ allprojects {
                     doFirst { logger.quiet "Copying dependencies to $buildDir/dependencies" }
                 }
                 project.defaultTasks = ['collectJars'] + project.defaultTasks
+                project.defaultTasks = ['clean'] + project.defaultTasks
 
                 logger.quiet 'Applying jdepend plug-in'
                 project.plugins.apply( 'jdepend' )
