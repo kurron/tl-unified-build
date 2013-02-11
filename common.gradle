@@ -275,7 +275,7 @@ allprojects {
                     project.sonar.database.password = "sonar"
                     project.sonar.project.sourceEncoding = 'UTF-8'
                     project.sonar.project.dynamicAnalysis = 'false'
-                    project.sonar.project.coberturaReportPath = "$projectReportDir/cobertura/main/coverage.xml"
+                    project.sonar.project.coberturaReportPath = "$project.reportsDir/cobertura/main/coverage.xml"
                 }
             }
 
