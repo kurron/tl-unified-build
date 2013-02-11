@@ -83,6 +83,17 @@ allprojects {
             logger.quiet( "Generating stage one tasks for $name project" )
             ext.isSnapshot = version.endsWith("-SNAPSHOT")
 
+            if ( !project.plugins.hasPlugin( ProjectReportsPlugin ) )
+            {
+                logger.quiet 'Applying project-report plug-in'
+                project.plugins.apply( 'project-report' )
+                project.dependencyReport.enabled = true
+                project.propertyReport.enabled = true
+                project.taskReport.enabled = true
+                // most useful if the reports are generated prior to other tasks running
+                project.defaultTasks = ['projectReport'] + project.defaultTasks
+            }
+
             if ( project.plugins.hasPlugin( JavaPlugin ) )
             {
                 logger.quiet 'Java plugin detected!'
@@ -115,8 +126,8 @@ allprojects {
                     from( [configurations.testRuntime,configurations.sourceArchives] )
                     doFirst { logger.quiet "Copying dependencies to $buildDir/dependencies" }
                 }
-                project.defaultTasks = ['clean'] + project.defaultTasks
                 project.defaultTasks = ['collectJars'] + project.defaultTasks
+                project.defaultTasks = ['clean'] + project.defaultTasks
 
                 logger.quiet 'Applying jdepend plug-in'
                 project.plugins.apply( 'jdepend' )
@@ -267,17 +278,6 @@ allprojects {
                     }
                     project.defaultTasks.add( 'uploadArchives' )
                 }
-            }
-
-            if ( !project.plugins.hasPlugin( ProjectReportsPlugin ) )
-            {
-                logger.quiet 'Applying project-report plug-in'
-                project.plugins.apply( 'project-report' )
-                project.dependencyReport.enabled = true
-                project.propertyReport.enabled = true
-                project.taskReport.enabled = true
-                // most useful if the reports are generated prior to other tasks running
-                project.defaultTasks = ['projectReport'] + project.defaultTasks
             }
 
             if ( project.plugins.hasPlugin( GroovyPlugin ) )
