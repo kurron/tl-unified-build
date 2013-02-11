@@ -141,12 +141,14 @@ allprojects {
                 project.properties['checkstyle'].ignoreFailures = false
                 project.checkstyleMain.enabled = true
                 project.checkstyleTest.enabled = false
-                new File( "$buildDir" ).mkdirs()
-                ant.get( src: 'https://raw.github.com/kurron/tl-unified-build/master/config/checkstyle/checkstyle.xml',
-                        dest: "$buildDir/checkstyle.xml",
-                        verbose: true,
-                        usetimestamp: true,
-                        maxtime: httpTimeOut )
+                project.checkstyleMain.doFirst {
+                    new File( "$buildDir" ).mkdirs()
+                    ant.get( src: 'https://raw.github.com/kurron/tl-unified-build/master/config/checkstyle/checkstyle.xml',
+                            dest: "$buildDir/checkstyle.xml",
+                            verbose: true,
+                            usetimestamp: true,
+                            maxtime: httpTimeOut )
+                }
                 project.checkstyle.configFile = file("$buildDir/checkstyle.xml")
                 project.checkstyle.configProperties = [suppressionDirectory: projectDir.path ]
 
