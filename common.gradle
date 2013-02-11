@@ -214,10 +214,16 @@ allprojects {
                                 totalbranchrate: 50,
                                 totallinerate: 50 )
 
-                        println "coverageFailure = ant.properties.coverageFailure"
-                        if( 'true' == ant.properties.coverageFailure )
+                        if ( project.ant.properties.containsKey( 'coverageFailure' ) )
                         {
-                            throw new RuntimeException("Not enough code coverage. Check $reporting.baseDir/cobertura/main for details.")
+                            if( 'true' == ant.properties.coverageFailure )
+                            {
+                                throw new RuntimeException("Not enough code coverage. Check $reporting.baseDir/cobertura/main for details.")
+                            }
+                        }
+                        else
+                        {
+                            logger.quiet 'Property ant.properties.coverageFailure not found. Assuming sufficient code coverage.'
                         }
                     }
                 }
