@@ -221,12 +221,36 @@ allprojects {
                             logger.quiet "ant.properties.coverageFailure = $ant.properties.coverageFailure"
                             if( 'true' == ant.properties.coverageFailure )
                             {
-                                throw new RuntimeException("Not enough code coverage. Check $reporting.baseDir/cobertura/main for details.")
+                                //throw new RuntimeException("Not enough code coverage. Check $reporting.baseDir/cobertura/main for details.")
                             }
                         }
                         else
                         {
                             logger.quiet 'Property ant.properties.coverageFailure not found. Assuming sufficient code coverage.'
+                        }
+                        logger.quiet "Consulting $buildDir/cobertura/main/cobertura-test.ser for coverage analysis."
+                        ant.'cobertura-check'( datafile: "$buildDir/cobertura/main/cobertura-test.ser",
+                                branchrate: 50,
+                                haltonfailure: false,
+                                failureproperty: 'bob',
+                                linerate: 50,
+                                packagebranchrate: 50,
+                                packagelinerate: 50,
+                                totalbranchrate: 50,
+                                totallinerate: 50 )
+
+                        if ( project.ant.properties.containsKey( 'bob' ) )
+                        {
+                            logger.quiet 'Property ant.properties.bob found. Checking for sufficient code coverage.'
+                            logger.quiet "ant.properties.bob = $ant.properties.bob"
+                            if( 'true' == ant.properties.bob )
+                            {
+                                //throw new RuntimeException("Not enough code coverage. Check $reporting.baseDir/cobertura/main for details.")
+                            }
+                        }
+                        else
+                        {
+                            logger.quiet 'Property ant.properties.bob not found. Assuming sufficient code coverage.'
                         }
                     }
                 }
