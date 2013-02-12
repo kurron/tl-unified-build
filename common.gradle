@@ -199,20 +199,21 @@ allprojects {
                     logger.quiet "Cobertura exclusions not found."
                 }
                 ant.taskdef( resource: 'tasks.properties',
-                        classpath: project.configurations.cobertura.asPath )
+                             classpath: project.configurations.cobertura.asPath )
                 task verifyCodeCoverage( dependsOn: 'test',
                                          description: 'Create code coverage reports',
                                          group: 'Reporting') {
                     doFirst {
+                        logger.quiet "Consulting $buildDir/cobertura/main/cobertura.ser for coverage analysis."
                         ant.'cobertura-check'( datafile: "$buildDir/cobertura/main/cobertura.ser",
-                                branchrate: 50,
-                                haltonfailure: false,
-                                failureproperty: 'coverageFailure',
-                                linerate: 50,
-                                packagebranchrate: 50,
-                                packagelinerate: 50,
-                                totalbranchrate: 50,
-                                totallinerate: 50 )
+                                               branchrate: 50,
+                                               haltonfailure: false,
+                                               failureproperty: 'coverageFailure',
+                                               linerate: 50,
+                                               packagebranchrate: 50,
+                                               packagelinerate: 50,
+                                               totalbranchrate: 50,
+                                               totallinerate: 50 )
 
                         if ( project.ant.properties.containsKey( 'coverageFailure' ) )
                         {
