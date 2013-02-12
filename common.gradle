@@ -42,7 +42,7 @@ allprojects {
         }
         dependencies {
             classpath group: 'org.kurron', name: 'tl-unified-build', version: '1.0.0'
-            classpath 'org.kurron:gradle-cobertura-plugin:2.0.0'
+            classpath 'org.kurron:gradle-cobertura-plugin:1.0.0'
         }
     }
 
