@@ -187,6 +187,7 @@ allprojects {
 
                 logger.quiet 'Applying cobertura plug-in'
                 project.plugins.apply( 'cobertura' )
+                project.coberturaInstrumentTest.enabled = false
                 project.cobertura.includes = ['**/*.java', '**/*.groovy']
                 if ( project.properties.containsKey( 'coverageExcludes' ) )
                 {
