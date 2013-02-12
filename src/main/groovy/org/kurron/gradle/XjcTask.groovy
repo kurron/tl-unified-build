@@ -23,7 +23,9 @@ class XjcTask extends DefaultTask {
         logger.quiet "Compiling $sourceFile into $destinationDirectory"
         logger.quiet "Generating classes into $packageName package"
         new File( destinationDirectory ).mkdirs()
-        Exec task = project.tasks.add( 'xjcCommandLine', Exec.class )
+        String internalName = name.capitalize() + "xjcCommandLine"
+        logger.quiet "Adding internal task named $internalName"
+        Exec task = project.tasks.add( internalName, Exec.class )
         task.commandLine = ['xjc', '-d', destinationDirectory, '-p', packageName, '-xmlschema', '-verbose', '-readOnly', '-mark-generated', sourceFile]
         def command = task.commandLine.join( ' ' )
         logger.quiet "Executing $command"
