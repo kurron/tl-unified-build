@@ -205,8 +205,8 @@ allprojects {
                                          description: 'Create code coverage reports',
                                          group: 'Reporting') {
                     doFirst {
-                        logger.quiet "Consulting $buildDir/cobertura/main/cobertura-test for coverage analysis."
-                        ant.'cobertura-check'( datafile: "$buildDir/cobertura/main/cobertura-test",
+                        logger.quiet "Consulting $buildDir/cobertura/main/cobertura-test.ser for coverage analysis."
+                        ant.'cobertura-check'( datafile: "$buildDir/cobertura/main/cobertura-test.ser",
                                                branchrate: 50,
                                                haltonfailure: false,
                                                failureproperty: 'coverageFailure',
