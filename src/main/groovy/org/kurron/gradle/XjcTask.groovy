@@ -27,24 +27,18 @@ class XjcTask extends DefaultTask {
         String internalName = name.capitalize() + "CommandLine"
         logger.quiet "Adding internal task named $internalName"
         Exec task = project.tasks.add( internalName, Exec.class )
-        task.commandLine = ['xjc', '-d', destinationDirectory, '-p', packageName, '-xmlschema', '-verbose', '-readOnly', '-mark-generated', bindingFileCommand(), sourceFile]
+        if ( null == bindingFile )
+        {
+            task.commandLine = ['xjc', '-d', destinationDirectory, '-p', packageName, '-xmlschema', '-verbose', '-readOnly', '-mark-generated', sourceFile]
+        }
+        else
+        {
+            task.commandLine = ['xjc', '-d', destinationDirectory, '-p', packageName, '-xmlschema', '-verbose', '-readOnly', '-mark-generated','-npa', '-b', bindingFile, sourceFile]
+        }
         def command = task.commandLine.join( ' ' )
         logger.quiet "Executing $command"
         task.execute()
         project.sourceSets['main'].java.srcDir( destinationDirectory )
-    }
-
-    private String bindingFileCommand() {
-        String command
-        if ( null == bindingFile )
-        {
-            command = ''
-        }
-        else
-        {
-            command = "-npa -b $bindingFile"
-        }
-        return command
     }
 
     private createPathToSingleFileOrEntireDirectory(String sourceDirectory) {
