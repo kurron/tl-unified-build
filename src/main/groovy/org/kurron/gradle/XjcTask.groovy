@@ -14,6 +14,7 @@ class XjcTask extends DefaultTask {
     String destinationDirectory = null
     String packageName = 'org.kurron.generated'
     String schemaFile = null
+    String bindingFile = null
 
     @TaskAction
     def work() {
@@ -26,11 +27,24 @@ class XjcTask extends DefaultTask {
         String internalName = name.capitalize() + "CommandLine"
         logger.quiet "Adding internal task named $internalName"
         Exec task = project.tasks.add( internalName, Exec.class )
-        task.commandLine = ['xjc', '-d', destinationDirectory, '-p', packageName, '-xmlschema', '-verbose', '-readOnly', '-mark-generated', sourceFile]
+        task.commandLine = ['xjc', '-d', destinationDirectory, '-p', packageName, '-xmlschema', '-verbose', '-readOnly', '-mark-generated', bindingFileCommand(), sourceFile]
         def command = task.commandLine.join( ' ' )
         logger.quiet "Executing $command"
         task.execute()
         project.sourceSets['main'].java.srcDir( destinationDirectory )
+    }
+
+    private String bindingFileCommand() {
+        String command
+        if ( null == bindingFile )
+        {
+            command = ''
+        }
+        else
+        {
+            command = "-npa -b $bindingFile"
+        }
+        return command
     }
 
     private createPathToSingleFileOrEntireDirectory(String sourceDirectory) {
