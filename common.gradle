@@ -93,10 +93,7 @@ allprojects {
 
     if ( stageOne )
     {
-        afterProject { project ->
-            logger.quiet( "Generating stage one tasks for $name project" )
-            ext.isSnapshot = version.endsWith("-SNAPSHOT")
-
+        beforeEvaluate { project ->
             logger.quiet( "Setting up artifact publishing for $name project" )
             project.plugins.apply( 'maven' )
             if ( project.isSnapshot )
@@ -156,6 +153,11 @@ allprojects {
                 project.sonar.project.coberturaReportPath = file( "$reporting.baseDir/cobertura/main/coverage.xml" )
             }
 
+        }
+
+        afterEvaluate { project ->
+            logger.quiet( "Generating stage one tasks for $name project" )
+            ext.isSnapshot = version.endsWith("-SNAPSHOT")
 
             if ( project.plugins.hasPlugin( JavaPlugin ) )
             {
