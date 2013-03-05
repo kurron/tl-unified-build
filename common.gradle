@@ -90,12 +90,17 @@ allprojects {
         }
     }
 
-
     if ( stageOne )
     {
         beforeEvaluate { project ->
             logger.quiet( "Setting up artifact publishing for $name project" )
             project.plugins.apply( 'maven' )
+        }
+
+        afterEvaluate { project ->
+            logger.quiet( "Generating stage one tasks for $name project" )
+            ext.isSnapshot = version.endsWith("-SNAPSHOT")
+
             if ( project.isSnapshot )
             {
                 logger.quiet 'Snapshot revision detected. Applying maven plug-in.'
@@ -152,12 +157,6 @@ allprojects {
                 project.sonar.project.dynamicAnalysis = 'false'
                 project.sonar.project.coberturaReportPath = file( "$reporting.baseDir/cobertura/main/coverage.xml" )
             }
-
-        }
-
-        afterEvaluate { project ->
-            logger.quiet( "Generating stage one tasks for $name project" )
-            ext.isSnapshot = version.endsWith("-SNAPSHOT")
 
             if ( project.plugins.hasPlugin( JavaPlugin ) )
             {
