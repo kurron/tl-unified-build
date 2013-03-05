@@ -97,6 +97,65 @@ allprojects {
             logger.quiet( "Generating stage one tasks for $name project" )
             ext.isSnapshot = version.endsWith("-SNAPSHOT")
 
+            if ( project.isSnapshot )
+            {
+                logger.quiet 'Snapshot revision detected. Applying maven plug-in.'
+                project.plugins.apply( 'maven' )
+                project.defaultTasks.add( 'install' )
+            }
+            else
+            {
+                // this is the publishing plugin that is currently in incubation.  Works great
+                // but is limited to one artifact only.  We will switch over to this when it is
+                // done baking.
+/*
+                    logger.quiet 'Release revision detected. Applying maven-publish plug-in.'
+                    project.plugins.apply( 'maven-publish' )
+                    project.defaultTasks.add( 'publishMavenPublicationToMavenLocal' )
+                    project.defaultTasks.add( 'publishMavenPublicationToMavenRepository' )
+
+                    project.publishing {
+                        repositories {
+                            maven {
+                                description 'Sandbox area of the repository to test publishing to'
+                                url = publicationUrl
+                                credentials {
+                                    username = publicationUsername
+                                    password = publicationPassword
+                                }
+                            }
+                        }
+                    }
+*/
+                logger.quiet 'Release revision detected. Configuring for Artifactory publication.'
+                project.plugins.apply( 'maven' )
+                project.uploadArchives {
+                    repositories {
+                        maven {
+                            description 'Sandbox area of the repository to test publishing to'
+                            url = publicationUrl
+                            credentials {
+                                username = publicationUsername
+                                password = publicationPassword
+                            }
+                        }
+                    }
+                }
+                project.defaultTasks.add( 'uploadArchives' )
+
+                logger.quiet 'Release revision detected. Configuring for Sonar publication.'
+                project.plugins.apply( 'sonar' )
+                project.defaultTasks.add( 'sonarAnalyze' )
+                project.sonar.server.url = "http://192.168.254.81:9000/"
+                project.sonar.database.url = "jdbc:mysql://192.168.254.81/sonar"
+                project.sonar.database.driverClassName = "com.mysql.jdbc.Driver"
+                project.sonar.database.username = "sonar"
+                project.sonar.database.password = "sonar"
+                project.sonar.project.sourceEncoding = 'UTF-8'
+                project.sonar.project.dynamicAnalysis = 'false'
+                project.sonar.project.coberturaReportPath = file( "$reporting.baseDir/cobertura/main/coverage.xml" )
+            }
+
             if ( project.plugins.hasPlugin( JavaPlugin ) )
             {
                 logger.quiet 'Java plugin detected!'
@@ -245,64 +304,6 @@ allprojects {
                 }
                 project.tasks.getByName( 'check' ).dependsOn( verifyCodeCoverage )
 
-                if ( project.isSnapshot )
-                {
-                    logger.quiet 'Snapshot revision detected. Applying maven plug-in.'
-                    project.plugins.apply( 'maven' )
-                    project.defaultTasks.add( 'install' )
-                }
-                else
-                {
-                    // this is the publishing plugin that is currently in incubation.  Works great
-                    // but is limited to one artifact only.  We will switch over to this when it is
-                    // done baking.
-/*
-                    logger.quiet 'Release revision detected. Applying maven-publish plug-in.'
-                    project.plugins.apply( 'maven-publish' )
-                    project.defaultTasks.add( 'publishMavenPublicationToMavenLocal' )
-                    project.defaultTasks.add( 'publishMavenPublicationToMavenRepository' )
-
-                    project.publishing {
-                        repositories {
-                            maven {
-                                description 'Sandbox area of the repository to test publishing to'
-                                url = publicationUrl
-                                credentials {
-                                    username = publicationUsername
-                                    password = publicationPassword
-                                }
-                            }
-                        }
-                    }
-*/
-                    logger.quiet 'Release revision detected. Configuring for Artifactory publication.'
-                    project.plugins.apply( 'maven' )
-                    project.uploadArchives {
-                        repositories {
-                            maven {
-                                description 'Sandbox area of the repository to test publishing to'
-                                url = publicationUrl
-                                credentials {
-                                    username = publicationUsername
-                                    password = publicationPassword
-                                }
-                            }
-                        }
-                    }
-                    project.defaultTasks.add( 'uploadArchives' )
-
-                    logger.quiet 'Release revision detected. Configuring for Sonar publication.'
-                    project.plugins.apply( 'sonar' )
-                    project.defaultTasks.add( 'sonarAnalyze' )
-                    project.sonar.server.url = "http://192.168.254.81:9000/"
-                    project.sonar.database.url = "jdbc:mysql://192.168.254.81/sonar"
-                    project.sonar.database.driverClassName = "com.mysql.jdbc.Driver"
-                    project.sonar.database.username = "sonar"
-                    project.sonar.database.password = "sonar"
-                    project.sonar.project.sourceEncoding = 'UTF-8'
-                    project.sonar.project.dynamicAnalysis = 'false'
-                    project.sonar.project.coberturaReportPath = file( "$reporting.baseDir/cobertura/main/coverage.xml" )
-                }
             }
 
             if ( project.plugins.hasPlugin( GroovyPlugin ) )
