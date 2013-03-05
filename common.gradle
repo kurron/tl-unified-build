@@ -15,8 +15,10 @@ allprojects {
     ext.codehausCacheUrl = "http://192.168.254.81:81/artifactory/codehaus-cache"
     ext.jbossCacheUrl = "http://192.168.254.81:81/artifactory/jboss-cache"
     ext.springsourceCacheUrl = "http://192.168.254.81:81/artifactory/springsource-repo-cache"
+    ext.localCacheUrl = "http://192.168.254.81:81/artifactory/ext-release-local"
 
     if ( project.properties.containsKey( 'project_version' ) )
+
     {
         logger.quiet "Using specifed project_version of $project_version"
         status = 'release'
@@ -66,6 +68,11 @@ allprojects {
             name 'SpringSourceCache'
             description 'Local Artifactory cache of SpringSource'
             url = springsourceCacheUrl
+        }
+        maven {
+            name 'LocalCache'
+            description 'Local repository for third party libraries'
+            url = localCacheUrl
         }
         maven {
             name 'Experimental'
