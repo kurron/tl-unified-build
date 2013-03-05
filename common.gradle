@@ -93,7 +93,7 @@ allprojects {
     if ( stageOne )
     {
         beforeEvaluate { project ->
-            logger.quiet( "Setting up artifact publishing for $name project" )
+            logger.quiet( "Applying Maven plug-in" )
             project.plugins.apply( 'maven' )
         }
 
@@ -103,7 +103,7 @@ allprojects {
 
             if ( project.isSnapshot )
             {
-                logger.quiet 'Snapshot revision detected. Applying maven plug-in.'
+                logger.quiet 'Snapshot revision detected. Adding install task to default.'
                 project.defaultTasks.add( 'install' )
             }
             else
@@ -130,7 +130,7 @@ allprojects {
                         }
                     }
 */
-                logger.quiet 'Release revision detected. Configuring for Artifactory publication.'
+                logger.quiet 'Release revision detected. Adding uploadArchives to default tasks.'
                 project.uploadArchives {
                     repositories {
                         maven {
@@ -145,17 +145,6 @@ allprojects {
                 }
                 project.defaultTasks.add( 'uploadArchives' )
 
-                logger.quiet 'Release revision detected. Configuring for Sonar publication.'
-                project.plugins.apply( 'sonar' )
-                project.defaultTasks.add( 'sonarAnalyze' )
-                project.sonar.server.url = "http://192.168.254.81:9000/"
-                project.sonar.database.url = "jdbc:mysql://192.168.254.81/sonar"
-                project.sonar.database.driverClassName = "com.mysql.jdbc.Driver"
-                project.sonar.database.username = "sonar"
-                project.sonar.database.password = "sonar"
-                project.sonar.project.sourceEncoding = 'UTF-8'
-                project.sonar.project.dynamicAnalysis = 'false'
-                project.sonar.project.coberturaReportPath = file( "$reporting.baseDir/cobertura/main/coverage.xml" )
             }
 
             if ( project.plugins.hasPlugin( JavaPlugin ) )
@@ -305,6 +294,20 @@ allprojects {
                 }
                 project.tasks.getByName( 'check' ).dependsOn( verifyCodeCoverage )
 
+                if ( !project.isSnapshot )
+                {
+                    logger.quiet 'Release revision detected. Configuring for Sonar publication.'
+                    project.plugins.apply( 'sonar' )
+                    project.defaultTasks.add( 'sonarAnalyze' )
+                    project.sonar.server.url = "http://192.168.254.81:9000/"
+                    project.sonar.database.url = "jdbc:mysql://192.168.254.81/sonar"
+                    project.sonar.database.driverClassName = "com.mysql.jdbc.Driver"
+                    project.sonar.database.username = "sonar"
+                    project.sonar.database.password = "sonar"
+                    project.sonar.project.sourceEncoding = 'UTF-8'
+                    project.sonar.project.dynamicAnalysis = 'false'
+                    project.sonar.project.coberturaReportPath = file( "$reporting.baseDir/cobertura/main/coverage.xml" )
+                }
             }
 
             if ( project.plugins.hasPlugin( GroovyPlugin ) )
