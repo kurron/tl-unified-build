@@ -92,60 +92,10 @@ allprojects {
 
     if ( stageOne )
     {
-        beforeEvaluate { project ->
-            logger.quiet( "Applying Maven plug-in" )
-            project.plugins.apply( 'maven' )
-        }
-
         afterEvaluate { project ->
             logger.quiet( "Generating stage one tasks for $name project" )
             ext.isSnapshot = version.endsWith("-SNAPSHOT")
 
-            if ( project.isSnapshot )
-            {
-                logger.quiet 'Snapshot revision detected. Adding install task to default.'
-                project.defaultTasks.add( 'install' )
-            }
-            else
-            {
-                // this is the publishing plugin that is currently in incubation.  Works great
-                // but is limited to one artifact only.  We will switch over to this when it is
-                // done baking.
-/*
-                    logger.quiet 'Release revision detected. Applying maven-publish plug-in.'
-                    project.plugins.apply( 'maven-publish' )
-                    project.defaultTasks.add( 'publishMavenPublicationToMavenLocal' )
-                    project.defaultTasks.add( 'publishMavenPublicationToMavenRepository' )
-
-                    project.publishing {
-                        repositories {
-                            maven {
-                                description 'Sandbox area of the repository to test publishing to'
-                                url = publicationUrl
-                                credentials {
-                                    username = publicationUsername
-                                    password = publicationPassword
-                                }
-                            }
-                        }
-                    }
-*/
-                logger.quiet 'Release revision detected. Adding uploadArchives to default tasks.'
-                project.uploadArchives {
-                    repositories {
-                        maven {
-                            description 'Sandbox area of the repository to test publishing to'
-                            url = publicationUrl
-                            credentials {
-                                username = publicationUsername
-                                password = publicationPassword
-                            }
-                        }
-                    }
-                }
-                project.defaultTasks.add( 'uploadArchives' )
-
-            }
 
             if ( project.plugins.hasPlugin( JavaPlugin ) )
             {
@@ -294,7 +244,60 @@ allprojects {
                 }
                 project.tasks.getByName( 'check' ).dependsOn( verifyCodeCoverage )
 
-                if ( !project.isSnapshot )
+                // the Maven plug-in onlu publishes if the Java plug-in is installed -- it is an unfixed bug
+                logger.quiet( "Applying Maven plug-in" )
+                project.plugins.apply( 'maven' )
+                if ( project.isSnapshot )
+                {
+                    logger.quiet 'Snapshot revision detected. Adding install task to default.'
+                    project.defaultTasks.add( 'install' )
+                }
+                else
+                {
+                    // this is the publishing plugin that is currently in incubation.  Works great
+                    // but is limited to one artifact only.  We will switch over to this when it is
+                    // done baking.
+/*
+                    logger.quiet 'Release revision detected. Applying maven-publish plug-in.'
+                    project.plugins.apply( 'maven-publish' )
+                    project.defaultTasks.add( 'publishMavenPublicationToMavenLocal' )
+                    project.defaultTasks.add( 'publishMavenPublicationToMavenRepository' )
+
+                    project.publishing {
+                        repositories {
+                            maven {
+                                description 'Sandbox area of the repository to test publishing to'
+                                url = publicationUrl
+                                credentials {
+                                    username = publicationUsername
+                                    password = publicationPassword
+                                }
+                            }
+                        }
+                    }
+*/
+                    logger.quiet 'Release revision detected. Adding uploadArchives to default tasks.'
+                    project.uploadArchives {
+                        repositories {
+                            maven {
+                                description 'Sandbox area of the repository to test publishing to'
+                                url = publicationUrl
+                                credentials {
+                                    username = publicationUsername
+                                    password = publicationPassword
+                                }
+                            }
+                        }
+                    }
+                    project.defaultTasks.add( 'uploadArchives' )
+
+                }
+
+                if ( project.isSnapshot )
+                {
+                    logger.quiet 'Snapshot revision detected. Sonar publication not configured.'
+                }
+                else
                 {
                     logger.quiet 'Release revision detected. Configuring for Sonar publication.'
                     project.plugins.apply( 'sonar' )
