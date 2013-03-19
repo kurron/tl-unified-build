@@ -250,6 +250,17 @@ allprojects {
                 }
                 project.tasks.getByName( 'check' ).dependsOn( verifyCodeCoverage )
 
+                // we always want to remove Cobertura instrumented classes so that we don't have to issue clean builds in order to get correct coverage numbers
+                task cleanCobertura( type: Delete ) {
+                    description = 'Removes Cobertura artifacts from the build area.'
+                    group = 'Build'
+
+                    logger.quiet "Cleaning Cobertura artifacts"
+                    delete 'build/cobertura', 'build/reports/cobertura'
+                }
+
+                project.tasks.getByName( 'compileJava' ).dependsOn( cleanCobertura )
+
                 // the Maven plug-in onlu publishes if the Java plug-in is installed -- it is an unfixed bug
                 logger.quiet( "Applying Maven plug-in" )
                 project.plugins.apply( 'maven' )
