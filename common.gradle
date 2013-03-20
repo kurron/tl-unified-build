@@ -103,6 +103,14 @@ allprojects {
             ext.isSnapshot = version.endsWith("-SNAPSHOT")
 
 
+            if ( project.plugins.hasPlugin( WarPlugin ) )
+            {
+                war {
+                    manifest {
+                        attributes( "Implementation-Title": project.name, "Implementation-Version": project.version )
+                    }                }
+            }
+
             if ( project.plugins.hasPlugin( JavaPlugin ) )
             {
                 logger.quiet 'Java plugin detected!'
@@ -161,6 +169,13 @@ allprojects {
                 ext.sharedManifest = manifest {
                     attributes( "Implementation-Title": project.name, "Implementation-Version": project.version )
                 }
+
+                jar {
+                    manifest = project.manifest {
+                        from sharedManifest
+                    }
+                }
+
                 task sourcesJar(type: Jar, dependsOn: classes) {
                     classifier = 'sources'
                     from sourceSets.main.allSource
