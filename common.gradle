@@ -128,15 +128,6 @@ allprojects {
                 project.tasks.getByName( 'test' ).jvmArgs "-XX:-UseSplitVerifier"
                 project.tasks.getByName( 'test' ).maxParallelForks = Runtime.runtime.availableProcessors()
 
-                // we use the "module" form so that transitive dependencies aren't pulled down and we fully control the versions
-                project.dependencies  {
-                    testCompile module( "junit:junit-dep:${junitVersion}" )
-                    testCompile module( "org.hamcrest:hamcrest-all:${hamcrestVersion}" )
-
-                    sourceArchives module( "junit:junit-dep:${junitVersion}:sources" )
-                    sourceArchives module( "org.hamcrest:hamcrest-all:${hamcrestVersion}:sources" )
-                }
-
                 task collectJars(type: Copy) {
                     description 'Copy dependencies into build area for use by IDEs'
                     into "$buildDir/dependencies"
