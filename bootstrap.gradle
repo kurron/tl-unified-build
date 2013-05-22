@@ -1,4 +1,4 @@
-ext.wrapperVersion = '1.6.0'
+ext.wrapperVersion = '1.4.0'
 ext.artifactory ='192.168.254.81:81'
 
 task wrapper(type: Wrapper) {
